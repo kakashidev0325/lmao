@@ -1,14 +1,14 @@
 const CONFIG = {
-  tokenAddress: "9rzRfWAFzjkV7HMm36M1ZSh7JUf4S8pw6UeZdPdLpump",
+  tokenAddress: "",
   pumpFunUrl: "",
-  twitter: "https://x.com/trumponsol_x",
+  twitter: "https://x.com/Mystjnn",
   telegram: "",
 };
 
 function getPumpFunUrl() {
   if (CONFIG.pumpFunUrl) return CONFIG.pumpFunUrl;
   if (CONFIG.tokenAddress) return `https://pump.fun/coin/${CONFIG.tokenAddress}`;
-  return "https://pump.fun";
+  return "#contract";
 }
 
 function initContract() {
@@ -29,13 +29,11 @@ function initContract() {
   copyBtn.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(address);
-      copyBtn.classList.add("copied");
       copyBtn.textContent = "Copied";
       toast.textContent = "Contract address copied.";
       toast.classList.add("show");
 
       setTimeout(() => {
-        copyBtn.classList.remove("copied");
         copyBtn.textContent = "Copy";
         toast.classList.remove("show");
       }, 2500);
@@ -71,17 +69,67 @@ function initSocialLinks() {
     el.href = pumpUrl;
   });
 
-  document.querySelectorAll("[data-telegram]").forEach((el) => {
-    if (CONFIG.telegram) el.href = CONFIG.telegram;
-  });
-
   document.querySelectorAll("[data-twitter]").forEach((el) => {
     if (CONFIG.twitter) el.href = CONFIG.twitter;
   });
+}
+
+function initReveal() {
+  const targets = [
+    ".intro-copy",
+    ".intro-body",
+    ".intro-stats article",
+    ".about-text",
+    ".banner-show .section-intro",
+    ".banner-stage",
+    ".banner-notes p",
+    ".lore .section-intro",
+    ".lore-columns article",
+    ".pullquote",
+    ".pillars .section-intro",
+    ".pillar-grid li",
+    ".story-head",
+    ".story-embed",
+    ".ca-inner",
+    ".tokenomics .section-intro",
+    ".tok-grid li",
+    ".tok-detail > div",
+    ".roadmap .section-intro",
+    ".road li",
+    ".faq-layout .section-intro",
+    ".faq-list details",
+    ".buy-panel",
+    ".closing-inner",
+  ];
+
+  const nodes = targets.flatMap((sel) => [...document.querySelectorAll(sel)]);
+  nodes.forEach((el, i) => {
+    el.classList.add("reveal");
+    el.style.transitionDelay = `${Math.min(i % 4, 3) * 0.08}s`;
+  });
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    nodes.forEach((el) => el.classList.add("in"));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("in");
+        io.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  nodes.forEach((el) => io.observe(el));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   initContract();
   initNav();
   initSocialLinks();
+  initReveal();
 });

@@ -1,5 +1,5 @@
 const CONFIG = {
-  tokenAddress: "93ZEdDMxAStjdNMg7pghsCayshfiFBdVawE8xCndpump",
+  tokenAddress: "",
   pumpFunUrl: "",
   twitter: "https://x.com/largemilkers_x",
   telegram: "",
